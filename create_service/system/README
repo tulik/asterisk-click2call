@@ -1,0 +1,97 @@
+=========================[ CreateIVR.php ]======================================
+nr_zewnetrzny - nasz numer zewnetrzny np. 222478000
+
+nr_klienta - dowolny numer, po ktorym bedziemy identyfikowac klienktow,
+             domyslnie najlepiej uzyc 1XXXX np. 10001, takze nr SIP klienta.
+
+voicemenu-custom-nr_klienta -  indywidualny ivr klienta.
+
+--------------------------------------------------------------------------------
+------------Rozpoznaje nr zewnetrzny na ktory przychodzi polaczenie-------------
+--------------------------------------------------------------------------------
+
+[DID_extravoip_default] <=== KONTEKST
+exten = s,1,Set(Var_TO=${SIP_HEADER(X-dialed-number)})
+
+--------------------------------------------------------------------------------
+------------Dodaje instrukcje warunkowa dla kazdego nowego klienta--------------
+--------------------------------------------------------------------------------
+
+exten = s,2,GotoIf($["${Var_TO}"="nr_zewnetrzy_1"]?nr_klienta);
+exten = s,nr_klienta,Goto(voicemenu-custom-nr_klienta,s,1)
+
+--------------------------------------------------------------------------------
+-----------Dodaje nowy kod IVR dla kazdego nowego klienta-----------------------
+--------------------------------------------------------------------------------
+
+[voicemenu-custom-nr_klienta] 
+include = default
+exten = s,1,NoOp(IVR_SET) ;Nazwa klienta
+exten = s,2,Answer()
+exten = s,3,Background(ivr_set/1) ;Sciezki do dzwiekow, domyslna:
+                                  ;/var/lib/asterisk/sounds/en/...
+
+exten = s,4,Background(ivr_set/2) ;Odtwarza nazwe firmy
+exten = s,5,Background(ivr_set/4)
+exten = s,6,Background(ivr_set/5)
+exten = s,7,Background(ivr_set/6)
+exten = s,8,Background(ivr_set/7)
+exten = s,9,Background(ivr_set/8)
+exten = s,10,Wait(4)
+exten = s,11,Background(ivr_set/9)
+exten = s,12,Wait(2)
+exten = s,13,Goto(voicemenu-custom-nr_klienta,s,5)
+exten = 1,1,Goto(queues,6500,1)
+exten = 2,1,Goto(queues,6501,1)
+exten = 5,1,Goto(voicemailgroups,6600,1) ;To jeszcze do opracowania
+exten = 9,1,Goto(voicemenu-custom-nr_klienta,s,5)
+exten = i,1,Background(ivr_set/10)
+exten = i,2,Background(ivr_set/11)
+exten = i,3,Wait(4)
+exten = i,4,Goto(voicemenu-custom-nr_klienta,s,11)
+
+
+
+========================[ CreateUsers.php ]=====================================
+Tworzy dwoch uzytkownikow:
+1. uzytkownik (klient) - moze miec mozliwosc wykonywania polaczen wychodzacych
+2. uzytkownik (duch) - dodatkowy uzytkownik tworzyny z kazdym "uzytkownikiem klientem"
+    - ma mozliwosc wykonywanie TYLKO wewnetrznych (internal) polaczen
+    - jest tworzony, dla zapewnienia optymalnego czasu dzialania rozwiazania
+
+[NR_SIP]
+fullname = Dział obsługi klienta
+registersip = no
+host = dynamic
+callgroup = 1
+mailbox = 6100
+call-limit = 100
+type = peer
+username = 6100
+transfer = yes
+callcounter = yes
+context = DLPN_test_1
+cid_number = 6100
+hasvoicemail = yes
+vmsecret = 6100
+email = 4tulik@gmail.com
+threewaycalling = no
+hasdirectory = no
+callwaiting = no
+hasmanager = no
+hasagent = yes
+hassip = yes
+hasiax = no
+secret = 6100
+nat = yes
+canreinvite = no
+dtmfmode = rfc2833
+insecure = no
+pickupgroup = 1
+macaddress = 6100
+autoprov = yes
+label = 6100
+linenumber = 1
+LINEKEYS = 1
+disallow = all
+allow = ulaw,ulaw,g729,speex
