@@ -12,6 +12,7 @@
  */
 class CreateUsers {
 
+    static private $_Directory = null;
     private $_Nr_SIP_klienta = null;
     private $_Nr_SIP_c2c = null;
     private $_Nr_klienta = null;
@@ -40,22 +41,22 @@ class CreateUsers {
 
     private function SetUser_code() {
         $this->_User_code = "
-[$nr_SIP]
+[\$nr_SIP]
 fullname = Dział obsługi klienta
 registersip = no
 host = dynamic
 callgroup = 1
-mailbox = $nr_SIP
+mailbox = \$nr_SIP
 call-limit = 100
 type = peer
-username = $nr_SIP
+username = \$nr_SIP
 transfer = yes
 callcounter = yes
-context = $dialplan
-cid_number = $this->_Numer_prezentowany
+context = \$dialplan
+cid_number = \$this->_Numer_prezentowany
 hasvoicemail = yes
-vmsecret = $this->_VM_password
-email = $this->_User_email;
+vmsecret = \$this->_VM_password
+email = \$this->_User_email;
 threewaycalling = no
 hasdirectory = no
 callwaiting = no
@@ -63,15 +64,15 @@ hasmanager = no
 hasagent = yes
 hassip = yes
 hasiax = no
-secret = $this->_User_password;
+secret = \$this->_User_password;
 nat = yes
 canreinvite = no
 dtmfmode = rfc2833
 insecure = no
 pickupgroup = 1
-macaddress = $nr_SIP
+macaddress = \$nr_SIP
 autoprov = yes
-label = $nr_SIP
+label = \$nr_SIP
 linenumber = 1
 LINEKEYS = 1
 disallow = all
