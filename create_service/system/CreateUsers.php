@@ -1,28 +1,78 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- * Description of CreateIVR
+ * Description of CreateUsers
  *
  * @author lukasz
  */
 class CreateUsers {
 
-    static private $_Directory = null;
+    /**
+     * Taki sam jak _Nr_klienta 
+     * Pula 10000-19999
+     * @fixme rzutowanie jesli numer i/lub? walidacja
+     * @var type 
+     */
     private $_Nr_SIP_klienta = null;
+
+    /**
+     * Pula 90000-99999
+     * @fixme rzutowanie, jesli numer i/lub? walidacja
+     * @var type String
+     */
     private $_Nr_SIP_c2c = null;
+
+    /**
+     * @fixme walidacja
+     * @var type String;
+     */
+    private $_User_password = null;
     private $_Nr_klienta = null;
     private $_Nazwa_klienta = null;
-    private $_User_code = null; // formatka usera dla Asteriska
-    private $_Has_external_dial = null; //true allow, false disallow
-    private $_VM_password = null; //haslo skrzynki glosowej
+
+    /**
+     * Tresc formatki dla Uzytkownia Asteriska
+     * Opisuje klienta odbierajacego polaczenia z wtyczki c2c
+     * @var type String
+     */
+    private $_ClientUserCode = null;
+
+    /**
+     * Opisuje uzytkownika tworzonego na potrzeby wtyczki c2c
+     * @var type String
+     */
+    private $_C2cUserCode = null;
+
+    /**
+     * Tworzyc uzytkonika na potrzeby wtyczki?
+     * $_CreateC2cUser = false - nie tworzy w/w uzytkownika
+     * @var type boolean
+     */
+    private $_CreateC2cUser = true;
+
+    /**
+     * Mozliwosc wykonywania polaczen wychodzacych wartosci 'true' || 'false'
+     * @var type String for security issue!
+     */
+    private $_Has_external_dial = null;
+
+    /**
+     * Haslo poczty glosowej
+     * @var type String
+     */
+    private $_VM_password = null;
+
+    /**
+     * @fixme Brak domyslnej wartosci
+     * @var type String
+     */
     private $_Numer_prezentowany = null;
+
+    /**
+     * Na ten adres bedzie wysylane nagranie ze skrzynki glosowej
+     * @var type String
+     */
     private $_User_email = null;
-    private $_User_password = null;
 
     public function __construct() {
         $this->SetUser_code();
@@ -40,23 +90,23 @@ class CreateUsers {
     }
 
     private function SetUser_code() {
-        $this->_User_code = "
-[\$nr_SIP]
+        $this->_ClientUserCode = "
+[$this->_Nr_SIP_c2c]
 fullname = Dział obsługi klienta
 registersip = no
 host = dynamic
 callgroup = 1
-mailbox = \$nr_SIP
+mailbox = 
 call-limit = 100
 type = peer
-username = \$nr_SIP
+username = $this->_Nr_SIP_c2c
 transfer = yes
 callcounter = yes
-context = \$dialplan
-cid_number = \$this->_Numer_prezentowany
+context = default ============================================================== Sprawdzic
+cid_number = $this->_Numer_prezentowany
 hasvoicemail = yes
-vmsecret = \$this->_VM_password
-email = \$this->_User_email;
+vmsecret = $this->_VM_password
+email = $this->_User_email;
 threewaycalling = no
 hasdirectory = no
 callwaiting = no
@@ -64,22 +114,59 @@ hasmanager = no
 hasagent = yes
 hassip = yes
 hasiax = no
-secret = \$this->_User_password;
+secret = $this->_User_password;
 nat = yes
 canreinvite = no
 dtmfmode = rfc2833
 insecure = no
 pickupgroup = 1
-macaddress = \$nr_SIP
+macaddress = $this->_Nr_SIP_c2c
 autoprov = yes
-label = \$nr_SIP
+label = $this->_Nr_SIP_c2c
 linenumber = 1
 LINEKEYS = 1
 disallow = all
-allow = ulaw,ulaw,g729,speex";
-        if (!isset($this->_User_code)) {
+allow = ulaw,ulaw,g729
+";
+        if (!isset($this->_ClientUserCode)) {
             throw new Exception('Nie mozna ustawic atrybutu User_code. ');
             $this->__desctruct();
+        } elseif ($this->_CreateC2cUser) {
+            $c2cUserSIP = $this->_Nr_SIP_klienta - 80000;
+            $this->_C2cUserCode = "
+[$c2cUserSIP]
+fullname = Dział obsługi klienta
+registersip = no
+host = dynamic
+callgroup = 2
+call-limit = 100
+type = peer
+username = $c2cUserSIP
+transfer = yes
+callcounter = yes
+context = default ;============================================================= SPRAWDZIC!
+cid_number = $c2cUserSIP
+threewaycalling = no
+hasdirectory = no
+callwaiting = no
+hasmanager = no
+hasagent = yes
+hassip = yes
+hasiax = no
+secret = $c2cUserSIP; ========================================================== sha1 for fun?
+nat = yes
+canreinvite = no
+dtmfmode = rfc2833
+insecure = no
+pickupgroup = 1
+macaddress = $c2cUserSIP
+autoprov = yes
+label = $c2cUserSIP
+linenumber = 1; ================================================================ SPRAWDZIC
+LINEKEYS = 1
+disallow = all
+allow = ulaw,ulaw,g729,speex ; speex for flash, probably needed. probably
+                   ";
         }
     }
 
@@ -112,6 +199,18 @@ allow = ulaw,ulaw,g729,speex";
             throw new Exception('Nie mozna ustawic atrybutu NAZWA. ');
     }
 
+    public function get_CreateC2cUser() {
+        if ($this->_CreateC2cUser == null) {
+            throw new Exception('Nie mozna ustawic atrybutu NAZWA. ');
+        } else {
+            return$this->_CreateC2cUser;
+        }
+    }
+
+    public function set_CreateC2cUser($_CreateC2cUser) {
+        $this->_CreateC2cUser = $_CreateC2cUser;
+    }
+
     public function getNr_klienta() {
         if (isset($this->_Nr_klienta)) {
             return $this->_Nr_klienta;
@@ -141,7 +240,7 @@ allow = ulaw,ulaw,g729,speex";
     }
 
     public function getHas_external_dial() {
-        if (isset($this->_Has_external_dial)) {
+        if ($this->_Has_external_dial == 'true' || $this->_Has_external_dial == 'false') {
             return $this->_Has_external_dial;
         } else {
             throw new Exception('Atrybut Has_external_dial nie jest ustawiony. ');
@@ -230,7 +329,7 @@ allow = ulaw,ulaw,g729,speex";
         } if (!isset($this->_Numer_prezentowany)) {
             $kill = true;
             throw new Exception('Atrybut _Numer_prezentowany nie jest ustawiony. ');
-        } if (!isset($this->_User_code)) {
+        } if (!isset($this->_ClientUserCode)) {
             $kill = true;
             throw new Exception('Atrybut _User_code nie jest ustawiony. ');
         } if (!isset($this->_User_email)) {

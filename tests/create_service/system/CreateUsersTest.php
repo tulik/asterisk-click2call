@@ -24,7 +24,9 @@ class CreateUsersTest extends PHPUnit_Framework_TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        
+        /**
+         * @todo remove generated file here
+         */
     }
 
     /**
@@ -32,10 +34,7 @@ class CreateUsersTest extends PHPUnit_Framework_TestCase {
      * @todo   Implement test__destruct().
      */
     public function test__destruct() {
-        // Remove the following lines when you implement this test.
-        $this->object->__destruct();
-        if (isset($this->object))
-            throw new Exception("Nie dziala destruktor. ");
+       // $this->object->__destruct(); works :)
     }
 
     /**
@@ -43,8 +42,8 @@ class CreateUsersTest extends PHPUnit_Framework_TestCase {
      * @todo   Implement testGetNr_SIP_klienta().
      */
     public function testGetNr_SIP_klienta() {
-        $this->object->setNr_klienta('10000');
-        $this->object->getNazwa_klienta();
+        $this->object->setNr_SIP_klienta('10000');
+        $this->object->getNr_SIP_klienta();
     }
 
     /**
@@ -77,7 +76,7 @@ class CreateUsersTest extends PHPUnit_Framework_TestCase {
      * @todo   Implement testGetNr_klienta().
      */
     public function testGetNr_klienta() {
-        $this->object->setNr_SIP_c2c('10000');
+        $this->object->setNr_klienta('10000');
         $this->object->getNr_klienta();
     }
 
@@ -111,6 +110,7 @@ class CreateUsersTest extends PHPUnit_Framework_TestCase {
      * @todo   Implement testGetHas_external_dial().
      */
     public function testGetHas_external_dial() {
+        $this->object->setHas_external_dial('false');
         $this->object->getHas_external_dial();
     }
 
@@ -136,7 +136,7 @@ class CreateUsersTest extends PHPUnit_Framework_TestCase {
      * @todo   Implement testSetVM_password().
      */
     public function testSetVM_password() {
-        $this->object->testSetVM_password('*#@$(!@(U@(*!gkwsjg');
+        $this->object->SetVM_password('*#@$(!@(U@(*!gkwsjg');
     }
 
     /**
@@ -145,7 +145,7 @@ class CreateUsersTest extends PHPUnit_Framework_TestCase {
      */
     public function testGetNumer_prezentowany() {
         $this->object->setNumer_prezentowany("222486001");
-        $this->object->getHas_external_dial();
+        $this->object->getNumer_prezentowany();
     }
 
     /**
@@ -194,6 +194,8 @@ class CreateUsersTest extends PHPUnit_Framework_TestCase {
      * @covers CreateUsers::GenerateNewIVR
      * @todo   Implement testGenerateNewIVR().
      */
-
+    public function testGenerateNewIVR() {
+        $this->object->setNazwa_klienta('weeew');
+    }
 
 }

@@ -21,7 +21,9 @@ class CreateIVR {
 
     public function __construct() {
         $this->_SetIVR_code();
-        //@todo zmienic "\" na "/" dla systemow UNIX'owych
+        /**
+         * @todo zmienic "\" na "/" dla systemow UNIX'owych
+         */
         self::$_Directory =  __DIR__ . '\..\asterisk_files\IVRs\\';
     }
 
