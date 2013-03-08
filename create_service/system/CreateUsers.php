@@ -7,6 +7,8 @@
  */
 class CreateUsers {
 
+    private static $_Directory = null;
+
     /**
      * Taki sam jak _Nr_klienta 
      * Pula 10000-19999
@@ -46,6 +48,7 @@ class CreateUsers {
     /**
      * Tworzyc uzytkonika na potrzeby wtyczki?
      * $_CreateC2cUser = false - nie tworzy w/w uzytkownika
+     * @fixme boolean to String
      * @var type boolean
      */
     private $_CreateC2cUser = true;
@@ -196,19 +199,23 @@ allow = ulaw,ulaw,g729,speex ; speex for flash, probably needed. probably
     public function setNr_SIP_c2c($Nr_SIP_c2c) {
         $this->_Nr_SIP_c2c = $Nr_SIP_c2c;
         if ($this->_Nr_SIP_c2c == null)
-            throw new Exception('Nie mozna ustawic atrybutu NAZWA. ');
+            throw new Exception('Nie mozna ustawic atrybutu _Nr_SIP_c2c. ');
     }
 
     public function get_CreateC2cUser() {
-        if ($this->_CreateC2cUser == null) {
-            throw new Exception('Nie mozna ustawic atrybutu NAZWA. ');
+        if ($this->_CreateC2cUser != false || $this->_CreateC2cUser != true) {
+            throw new Exception('Atrybut _CreateC2cUser nie ustawiony lub niepoprawny. ');
         } else {
-            return$this->_CreateC2cUser;
+            return $this->_CreateC2cUser;
         }
     }
 
     public function set_CreateC2cUser($_CreateC2cUser) {
-        $this->_CreateC2cUser = $_CreateC2cUser;
+        if ($_CreateC2cUser == false || $_CreateC2cUser == true) {
+            $this->_CreateC2cUser = $_CreateC2cUser;
+        } else {
+            throw new Exception('Nie mozna ustawic atrubutu _CreateC2cUser. ');
+        }
     }
 
     public function getNr_klienta() {
@@ -341,6 +348,12 @@ allow = ulaw,ulaw,g729,speex ; speex for flash, probably needed. probably
         } if (!isset($this->_VM_password)) {
             $kill = true;
             throw new Exception('Atrybut _VM_password nie jest ustawiony. ');
+        } if ($this->_CreateC2cUser == null) {
+            $kill = true;
+            /**
+             * @fixme $this->_CreateC2cUser == null ?
+             */
+            throw new Exception('Atrybut _CreateC2cUser nie jest ustawiony lub jest niepoprawny. ');
         }
         if ($kill == true) {
             throw new Exception('IVR nie zostal stworzony! ');
@@ -348,13 +361,38 @@ allow = ulaw,ulaw,g729,speex ; speex for flash, probably needed. probably
         }
     }
 
-    public function GenerateNewIVR() {
+    private function GenerateC2cSIPAccount() {
+
+        if ($this->_CreateC2cUser == false) {
+            return;
+        } elseif ($this->_CreateC2cUser == true) {
+            $directory = self::$_Directory;
+            $filename = $directory . 'C2cUsers' . "$this->_Nr_SIP_c2c-$this->_Nazwa_klienta";
+            $string = (string) $this->_C2cUserCode;
+            try {
+                $handle = fopen($filename, 'x+');
+            } catch (Exception $e) {
+                $e = $e->getTraceAsString();
+                throw new Exception(
+                        "Nie mozna stworzyc pliku o nazwie " .
+                        "$this->_Nr_SIP_c2c - $this->_Nazwa_klienta w katalogu " .
+                        "$directory \nPrawdopodobnie taki uzytkownik juz istnieje lub " .
+                        "brak wystarczajacych uprawnien. Trace: $e"
+                );
+            }
+            fwrite($handle, $string);
+            fclose($handle);
+        }
+    }
+
+    public function GenerateClientSIPAccount() {
         $this->_CheckUserAtrributes();
-        $this->_SetIVR_code();
+        $this->SetUser_code();
         $directory = self::$_Directory;
-        $filename = $directory . "$this->_Nr_klienta-$this->_Nazwa_klienta";
+
+        $filename = self::$_Directory . 'ClientUsers' . "$this->_Nr_klienta-$this->_Nazwa_klienta";
         $mode = 'x+';
-        $string = (string) $this->_IVR_code;
+        $string = (string) $this->_ClientUserCode;
         try {
             $handle = fopen($filename, $mode);
         } catch (Exception $e) {
@@ -368,6 +406,7 @@ allow = ulaw,ulaw,g729,speex ; speex for flash, probably needed. probably
         }
         fwrite($handle, $string);
         fclose($handle);
+        $this->GenerateC2cSIPAccount();
     }
 
 }
