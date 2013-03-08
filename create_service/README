@@ -1,0 +1,11 @@
+=========================[ asterisk_files ]=====================================
+Katalog w ktorym znajduja sie wygenerowane przez rozwiazanie pliki. 
+Pliki te powinny zostac wlaczone do konfiguracji Asteriska w /etc/asterisk/.
+
+=========================[ system ]=============================================
+Zawiera klasy implementujace rozwiazanie:
+
+1. Dodaj nowego klienta - stworz konto SIP oraz IVR, dodaj wewznetrzne konto SIP
+dla usprawnienia dzialania systemu.
+2. Zroc dane uzytkownika SIP, ktory moze byc zalogowany do wtyczki click2call,
+taki uzytkonik moze wykonywac TYLKO polaczenie weznetrzne
