@@ -1,0 +1,34 @@
+
+[90000]
+fullname = Dział obsługi klienta
+registersip = no
+host = dynamic
+callgroup = 2
+call-limit = 100
+type = peer
+username = 90000
+transfer = yes
+callcounter = yes
+context = default ;============================================================= SPRAWDZIC!
+cid_number = 90000
+threewaycalling = no
+hasdirectory = no
+callwaiting = no
+hasmanager = no
+hasagent = yes
+hassip = yes
+hasiax = no
+secret = 90000; ========================================================== sha1 for fun?
+nat = yes
+canreinvite = no
+dtmfmode = rfc2833
+insecure = no
+pickupgroup = 1
+macaddress = 90000
+autoprov = yes
+label = 90000
+linenumber = 1; ================================================================ SPRAWDZIC
+LINEKEYS = 1
+disallow = all
+allow = ulaw,ulaw,g729,speex ; speex for flash, probably needed. probably
+                   

@@ -94,15 +94,15 @@ class CreateUsers {
 
     private function SetUser_code() {
         $this->_ClientUserCode = "
-[$this->_Nr_SIP_c2c]
-fullname = Dział obsługi klienta
+[$this->_Nr_SIP_klienta]
+fullname = nazwa
 registersip = no
 host = dynamic
 callgroup = 1
 mailbox = 
 call-limit = 100
 type = peer
-username = $this->_Nr_SIP_c2c
+username = $this->_Nr_SIP_klienta
 transfer = yes
 callcounter = yes
 context = default ============================================================== Sprawdzic
@@ -123,9 +123,9 @@ canreinvite = no
 dtmfmode = rfc2833
 insecure = no
 pickupgroup = 1
-macaddress = $this->_Nr_SIP_c2c
+macaddress = $this->_Nr_SIP_klienta
 autoprov = yes
-label = $this->_Nr_SIP_c2c
+label = $this->_Nr_SIP_klienta
 linenumber = 1
 LINEKEYS = 1
 disallow = all
@@ -135,7 +135,7 @@ allow = ulaw,ulaw,g729
             throw new Exception('Nie mozna ustawic atrybutu User_code. ');
             $this->__desctruct();
         } elseif ($this->_CreateC2cUser) {
-            $c2cUserSIP = $this->_Nr_SIP_klienta - 80000;
+            $c2cUserSIP = $this->_Nr_SIP_klienta + 80000;
             $this->_C2cUserCode = "
 [$c2cUserSIP]
 fullname = Dział obsługi klienta
@@ -367,7 +367,7 @@ allow = ulaw,ulaw,g729,speex ; speex for flash, probably needed. probably
             return;
         } elseif ($this->_CreateC2cUser == true) {
             $directory = self::$_Directory;
-            $filename = $directory . 'C2cUsers' . "$this->_Nr_SIP_c2c-$this->_Nazwa_klienta";
+            $filename = $directory . "$this->_Nr_SIP_c2c-$this->_Nazwa_klienta";
             $string = (string) $this->_C2cUserCode;
             try {
                 $handle = fopen($filename, 'x+');
@@ -390,7 +390,7 @@ allow = ulaw,ulaw,g729,speex ; speex for flash, probably needed. probably
         $this->SetUser_code();
         $directory = self::$_Directory;
 
-        $filename = self::$_Directory . 'ClientUsers' . "$this->_Nr_klienta-$this->_Nazwa_klienta";
+        $filename = $directory . "$this->_Nr_klienta-$this->_Nazwa_klienta";
         $mode = 'x+';
         $string = (string) $this->_ClientUserCode;
         try {

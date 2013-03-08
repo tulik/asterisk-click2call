@@ -20,7 +20,6 @@ class CreateIVR {
     private $_Nazwa_klienta = null;
 
     public function __construct() {
-        $this->_SetIVR_code();
         /**
          * @todo zmienic "\" na "/" dla systemow UNIX'owych
          */

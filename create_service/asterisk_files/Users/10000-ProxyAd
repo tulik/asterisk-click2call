@@ -1,0 +1,37 @@
+
+[10000]
+fullname = nazwa
+registersip = no
+host = dynamic
+callgroup = 1
+mailbox = 
+call-limit = 100
+type = peer
+username = 10000
+transfer = yes
+callcounter = yes
+context = default ============================================================== Sprawdzic
+cid_number = 222468000
+hasvoicemail = yes
+vmsecret = voicemail_pass
+email = user@mail.com;
+threewaycalling = no
+hasdirectory = no
+callwaiting = no
+hasmanager = no
+hasagent = yes
+hassip = yes
+hasiax = no
+secret = user_pass;
+nat = yes
+canreinvite = no
+dtmfmode = rfc2833
+insecure = no
+pickupgroup = 1
+macaddress = 10000
+autoprov = yes
+label = 10000
+linenumber = 1
+LINEKEYS = 1
+disallow = all
+allow = ulaw,ulaw,g729
